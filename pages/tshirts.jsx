@@ -10,7 +10,6 @@ const Tshirts = ({ products }) => {
                         {
                             Object.keys(products).map(key => {
                                 let product = products[key]
-                                console.log(product?.size);
                                 return (
                                     <Link passHref={true} key={product._id} href={`/product/${product.slug}`}><div className="lg:w-1/4 md:w-1/3 p-4 w-full cursor-pointer shadow-lg m-5">
                                         <a className="block relative rounded overflow-hidden">

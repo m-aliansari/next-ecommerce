@@ -41,7 +41,7 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
                     </Link>
                     <AiOutlineShoppingCart onClick={toggleCart} className='text-xl md:text-2xl cursor-pointer' />
                 </div>
-                <div ref={ref} className={`w-72 h-[100vh] sideCart absolute top-0 right-0 bg-gray-100 px-8 py-10 transform transition-transform ${Object.keys(cart).length ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div ref={ref} className={`w-72 h-[100vh] overflow-y-scroll sideCart absolute top-0 right-0 bg-gray-100 px-8 py-10 transform transition-transform ${Object.keys(cart).length ? 'translate-x-0' : 'translate-x-full'}`}>
                     <h2 className='font-bold text-xl mb-4'>Shopping Cart</h2>
                     <span onClick={toggleCart} className="absolute top-5 right-2 cursor-pointer text-2xl text-gray-500"><AiFillCloseCircle /></span>
                     <ol className='font-semibold list-decimal'>
@@ -56,7 +56,7 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
                                 <li key={key}>
                                     <div className="flex item my-3">
                                         <div className='w-2/3'>
-                                            {element.name}
+                                            {element.name} ({element.size}/{element.variant})
                                         </div>
                                         <div className='w-1/3 flex justify-center items-center text-gray-500'>
                                             <AiFillMinusCircle onClick={() => { removeFromCart(key, 1) }} className='cursor-pointer text-gray-500 text-lg' />

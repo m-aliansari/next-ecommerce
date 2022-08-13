@@ -94,7 +94,7 @@ const Checkout = ({ cart, subTotal, removeFromCart, addToCart }) => (
                                         <li key={key}>
                                             <div className="flex item my-3">
                                                 <div className=''>
-                                                    {element.name}
+                                                    {element.name} ({element.size}/{element.variant})
                                                 </div>
                                                 <div className='w-1/3 flex justify-center items-center text-gray-500'>
                                                     <AiFillMinusCircle onClick={() => { removeFromCart(key, 1) }} className='cursor-pointer text-gray-500 text-lg' />
