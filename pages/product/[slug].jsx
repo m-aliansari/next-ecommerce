@@ -1,28 +1,46 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
-const Post = ({ addToCart, product, variants }) => {
+
+const Post = ({ addToCart, product, variants, buyNow, toast }) => {
 	const router = useRouter();
 	const { slug } = router.query;
 
 	const [pin, setPin] = useState("");
 	const [service, setService] = useState();
+	const [color, setColor] = useState(product?.color.toLowerCase());
+	const [size, setSize] = useState(product?.size.toUpperCase());
 
 	const checkServiceability = async () => {
 		let pins = await (await fetch("/api/pincode")).json();
 		if (pins.includes(parseInt(pin))) {
 			setService(true);
+			toast.success("Your Pincode is serviceable", {
+				position: "bottom-center",
+				autoClose: 1000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
 		} else {
 			setService(false);
+			toast.error("Sorry, Pincode is not serviceable", {
+				position: "bottom-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
 		}
 	};
 
 	const onChangePin = (e) => {
 		setPin(e.target.value);
 	};
-
-	const [color, setColor] = useState(product?.color.toLowerCase());
-	const [size, setSize] = useState(product?.size.toUpperCase());
 
 	return (
 		<>
@@ -146,7 +164,7 @@ const Post = ({ addToCart, product, variants }) => {
 
 									<div className="flex">
 										{Object.keys(variants).map((c) => {
-											return Object.keys(variants[c]).includes(size) ? (
+											return (
 												<button
 													key={c}
 													onClick={(e) => {
@@ -157,9 +175,7 @@ const Post = ({ addToCart, product, variants }) => {
 													}`}
 													style={{ backgroundColor: c }}
 												></button>
-											) : (
-												<></>
-											);
+											)
 										})}
 									</div>
 								</div>
@@ -195,7 +211,7 @@ const Post = ({ addToCart, product, variants }) => {
 							</div>
 							<div className="flex">
 								<span className="title-font font-medium text-2xl text-gray-900">
-									₨700
+									₨{product.price}
 								</span>
 								<button
 									onClick={() => {
@@ -212,7 +228,12 @@ const Post = ({ addToCart, product, variants }) => {
 								>
 									Add to Cart
 								</button>
-								<button className="flex ml-4 text-white bg-gray-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-gray-600 rounded">
+								<button
+									onClick={() =>
+										buyNow(slug, 1, product.price, product.title, size, color)
+									}
+									className="flex ml-4 text-white bg-gray-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-gray-600 rounded"
+								>
 									Buy Now
 								</button>
 								{/* <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
@@ -269,7 +290,7 @@ export async function getServerSideProps(context) {
 		mongoose.connect(process.env.MONGO_URI);
 	}
 	let product = await Product.findOne({ slug: context.query.slug });
-	let variants = await Product.find({ title: product.title });
+	let variants = await Product.find({ title: product.title, category: product.category });
 	let colorSizeSlug = {};
 	for (const item of variants) {
 		if (Object.keys(colorSizeSlug).includes(item.color.toLowerCase())) {
@@ -287,7 +308,7 @@ export async function getServerSideProps(context) {
 		props: {
 			product: JSON.parse(JSON.stringify(product)),
 			variants: colorSizeSlug,
-		}, // will be passed to the page component as props
+		},
 	};
 }
 

@@ -54,7 +54,7 @@ export async function getServerSideProps(context) {
     let products = await Product.find({ category: "tshirt" })
     let tshirts = {}
     for (let item of products) {
-        if (item.title in products) {
+        if (item.title in tshirts) {
             if (!tshirts[item.title].color.includes(item.color.toLowerCase()) && item.availableQty > 0)
                 tshirts[item.title].color.push(item.color.toLowerCase())
             if (!tshirts[item.title].size.includes(item.size.toUpperCase()) && item.availableQty > 0)
